@@ -65,7 +65,7 @@ begin
   Put_Line("Difference " & Integer(ExcessInCaseOfWinter)'Img & " kWh");
 
   CalculateWaste(DayRequest, ConstantUsage, Directory_Ratio*NumberOfPanelsInCaseOfWinter*PowerOfModule*PanelEfficiency/1000.0, WasteInWinter);
-  Put_Line("Waste in Winter " & Integer(WasteInWinter)'Img & " kWh");
+  Put_Line("Balance in Winter " & Integer(WasteInWinter)'Img & " kWh");
 
 
 end Main;
