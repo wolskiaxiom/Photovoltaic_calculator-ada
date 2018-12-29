@@ -1,5 +1,5 @@
-with Ada.Text_IO, how_many_modules;
-use Ada.Text_IO, how_many_modules;
+with Ada.Text_IO, how_many_modules, Ada.Command_Line;
+use Ada.Text_IO, how_many_modules, Ada.Command_Line;
 
 procedure Main is
   NumberOfUsers: Float;
@@ -32,10 +32,14 @@ procedure Main is
 
 
 begin
-  NumberOfUsers := 4.0;
-  Directory_Ratio := 1.13;
-  PanelEfficiency := 0.80;
-  PowerOfModule := 0.28;
+--  NumberOfUsers := 4.0;
+--  Directory_Ratio := 1.13;
+--  PanelEfficiency := 0.80;
+--  PowerOfModule := 0.28;
+  NumberOfUsers := Float'value(Argument(1));
+  Directory_Ratio := Float'value(Argument(2));
+  PanelEfficiency := Float'value(Argument(3));
+  PowerOfModule := Float'value(Argument(4));
 
   GetMinIrradiance(I_Cracow, MinimumIrradiance, NumberOfDaysInMonthOfMinimumIrradiance);
   Put_Line("Irradiance " & Integer(MinimumIrradiance)'Img & " NumberOfDays: " & Integer(NumberOfDaysInMonthOfMinimumIrradiance)'Img);
