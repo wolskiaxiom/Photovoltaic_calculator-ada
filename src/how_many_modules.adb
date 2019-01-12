@@ -1,10 +1,75 @@
 package body how_many_modules is
--- procedure Zapelnij(Tab : in out Irradiance) is
--- begin
---    for E of Tab loop
---       E := 2.0;
---    end loop;
--- end Zapelnij;
+
+procedure CheckInputValues(NumberOfUsers: in out Float; Directory_Ratio: in out Float;PanelEfficiency: in out Float; PowerOfModule: in out Float) is
+begin
+  if(NumberOfUsers<1.0) then
+    Put_Line("Liczba użytkowników ustawiona domyślnie(2)");
+    NumberOfUsers := 2.0;
+  end if;
+  if(Directory_Ratio<0.6 or Directory_Ratio>1.14) then
+    Put_Line("Współczynnik nachylenia paneli ustawiono domyślnie(1.13)");
+    Directory_Ratio := 1.13;
+  end if;
+  if(PanelEfficiency<0.0 or PanelEfficiency>1.0) then
+    Put_Line("Sprawność paneli ustawiona domyślnie(0.2)");
+    PanelEfficiency := 0.2;
+  end if;
+  if(PowerOfModule<0.0 or PowerOfModule>10.0) then
+      Put_Line("Moc panelu ustawiona domyślnie(0.28kw)");
+      PowerOfModule:=0.28;
+  end if;
+end CheckInputValues;
+
+procedure MakeCalculations(NumberOfUsers: in Float; Directory_Ratio: in Float; PanelEfficiency: in Float;PowerOfModule: in Float ) is
+begin
+  GetMinIrradiance(I_Specific, MinimumIrradiance, NumberOfDaysInMonthOfMinimumIrradiance);
+  Put_Line("Najmniejsze nasłonecznienie w roku" & Integer(MinimumIrradiance)'Img & " Liczba dni w tym miesiącu: " & Integer(NumberOfDaysInMonthOfMinimumIrradiance)'Img);
+  CalculateRequest(ConstantUsage, NumberOfUsers, UsagePerPerson, DayRequest);
+  Put_Line("Średnie dzienne zapotrzebowanie na energię elektryczną" & Integer(DayRequest)'Img & " kWh");
+
+  CalculateYearUsage(DayRequest, YearUsage);
+  Put_Line("Roczne zapotrzebowanie na energię " & Integer(YearUsage)'Img & " kWh");
+
+  CalculateExpectedPowerOfModules(DayRequest, NumberOfDaysInMonthOfMinimumIrradiance, MinimumIrradiance, Directory_Ratio,PanelEfficiency, ExpectedPowerOfModules);
+  Put_Line("Oczekiwana moc paneli: "& Integer(ExpectedPowerOfModules)'Img & "kW");
+
+  CalculateNumberOfPanelsInWinter(ExpectedPowerOfModules, PowerOfModule, NumberOfPanelsInCaseOfWinter);
+  Put_Line("Liczba paneli wystarczająca w 'najzimniejszym miesiącu' na wyprodukowanie dziennego zapotrzebowania na energię: " & Integer(NumberOfPanelsInCaseOfWinter)'Img);
+
+  CalculateAreaOfPanels(NumberOfPanelsInCaseOfWinter, PanelsAreaInCaseOfWinter);
+  Put_Line("Powierzchnia paneli: "& Integer(PanelsAreaInCaseOfWinter)'Img & " m^2");
+
+  SumYearIrradiance(I_Specific, SumOfYearIrradiance);
+  Put_Line("Roczne nasłonecznienie:" & Integer(SumOfYearIrradiance)'Img & " Wh/m^2");
+
+  SumYearProduction(SumOfYearIrradiance, Directory_Ratio, NumberOfPanelsInCaseOfWinter, PowerOfModule, PanelEfficiency, SumOfYearProductionInCaseOfWinter);
+  Put_Line("Roczna produkcja prądu:" & Integer(SumOfYearProductionInCaseOfWinter)'Img & " kWh");
+
+  DifferenceBetweenProductionAndRequest(SumOfYearProductionInCaseOfWinter, YearUsage, ExcessInCaseOfWinter);
+  Put_Line("Różnica pomiędzy energią wyprodukowaną, a energią wykorzystaną w przypadku posiadania akumulatora o pojemności wystarczającej na całą noc:" & Integer(ExcessInCaseOfWinter)'Img & " kWh");
+
+  CalculateWaste(DayRequest, ConstantUsage, Directory_Ratio*NumberOfPanelsInCaseOfWinter*PowerOfModule*PanelEfficiency/1000.0, WasteInWinter);
+  Put_Line("Różnica pomiędzy energią wyprodukowaną, a energią wykorzystaną w przypadku nieposiadania  akumulatora:" & Integer(WasteInWinter)'Img & " kWh");
+  -- Put_Line(GetValueFromRowAndCol(InputFile, 1,1)'Img);
+CalculateRealYearProduction;
+exception
+  when others => Put_Line("Coś poszło nie tak!");
+end MakeCalculations;
+
+
+procedure CalculateRealYearProduction is
+begin
+  if(Exists("../resources/zachmurzenie_krakow.txt"))then
+    for I in 1..12 loop
+      WZS := new SumMonthProduction(I,Positive(Directory_Ratio*100.0),Positive(NumberOfPanelsInCaseOfWinter),Positive(PowerOfModule*100.0),Positive(PanelEfficiency*100.0),1);
+    end loop;
+  end if;
+  if(Exists("resources/zachmurzenie_krakow.txt"))then
+    for I in 1..12 loop
+      WZS := new SumMonthProduction(I,Positive(Directory_Ratio*100.0),Positive(NumberOfPanelsInCaseOfWinter),Positive(PowerOfModule*100.0),Positive(PanelEfficiency*100.0),2);
+    end loop;
+  end if;
+end CalculateRealYearProduction;
 
 function GetFullRow(InputFile: in FILE_TYPE; LineNumber: in Integer) return String is
 begin
@@ -107,15 +172,7 @@ begin
   end loop;
 end CalculateWaste;
 
-procedure CalculateRealYearProduction(Cloudy: in FILE_TYPE; Irradiance_Specific: in Irradiance;Directory_Ratio: In Float; NumberOfPanels: In Float; PowerOfModule: In Float; PanelEfficiency: In Float; SumEnergy: Out Float) is
-begin
-  SumRealYearProduction := 0;
-  for MonthNumber in 1..12 loop
-    null;
-    --SumMonthProduction(MonthNumber)
-  end loop;
-  null;
-end CalculateRealYearProduction;
+
 
 function GetPossibilityOfSunnyWeather(NumberOfSunnyDays: in Float; NumberOfDays: in Float) return Float is
 begin
@@ -166,9 +223,45 @@ protected body ReadingFile is
   procedure ReadValue(MonthNumber: in Positive; WeatherState: in Positive; Value: out Float) is
   begin
     Value:=1.1;
-    Put_Line("Działa" & MonthNumber'Img & " "& WeatherState'Img);
+    Put_Line(MonthNumber'Img & " "& WeatherState'Img);
   end ReadValue;
 end ReadingFile;
+
+procedure File_Exists is
+   procedure Print_File_Exist (Name : String) is
+   begin
+      Put_Line ("Does " & Name & " exist? " &
+                  Boolean'Image (Exists (Name)));
+   end Print_File_Exist;
+   procedure Print_Dir_Exist (Name : String) is
+   begin
+      Put_Line ("Does directory " & Name & " exist? " &
+                  Boolean'Image (Exists (Name) and then Kind (Name) = Directory));
+   end Print_Dir_Exist;
+begin
+   Print_File_Exist ("input.txt" );
+   Print_File_Exist ("/input.txt");
+   Print_Dir_Exist ("docs");
+   Print_Dir_Exist ("/docs");
+end File_Exists;
+
+function GetSourceFile(TypeSource: Positive) return String is
+begin
+  if(TypeSource=1)then
+    return "../resources/zachmurzenie_krakow.txt" ;
+  end if;
+  if(TypeSource=2) then
+    return "resources/zachmurzenie_krakow.txt";
+  end if;
+  if(TypeSource=3) then
+    return "../resources/zachmurzenie_gdansk.txt";
+  end if;
+  if(TypeSource=4)then
+    return "resources/zachmurzenie_gdansk.txt";
+  end if;
+  return "../resources/zachmurzenie_krakow.txt" ;
+end GetSourceFile;
+
 
 task body SumMonthProduction is
   SumInMonth: Float := 0.0;
@@ -193,28 +286,28 @@ task body SumMonthProduction is
   RandomNumber: Float;
   begin
     SemaphoreForReading.Wait;
-    Open(InputFile, In_File, "../resources/zachmurzenie_krakow.txt");
+    Open(InputFile, In_File, GetSourceFile(TypeSource));
     NumberOfSunnyDays := GetValueFromRowAndCol(InputFile,Count(MonthNumber),1);
     -- Put_Line(NumberOfSunnyDays'Img&"Sunny");
     Close(InputFile);
     SemaphoreForReading.Signal;
 
     SemaphoreForReading.Wait;
-    Open(InputFile, In_File, "../resources/zachmurzenie_krakow.txt");
+    Open(InputFile, In_File, GetSourceFile(TypeSource));
     NumberOfCloudyDays := GetValueFromRowAndCol(InputFile,Count(MonthNumber),4);
     -- Put_Line(NumberOfCloudyDays'Img&"Cloudy");
     Close(InputFile);
     SemaphoreForReading.Signal;
 
     SemaphoreForReading.Wait;
-    Open(InputFile, In_File, "../resources/zachmurzenie_krakow.txt");
+    Open(InputFile, In_File, GetSourceFile(TypeSource));
     NumberOfFoggyDays := GetValueFromRowAndCol(InputFile,Count(MonthNumber),10);
     Close(InputFile);
     -- Put_Line(NumberOfFoggyDays'Img&"Foggy");
     SemaphoreForReading.Signal;
 
     SemaphoreForReading.Wait;
-    Open(InputFile, In_File, "../resources/zachmurzenie_krakow.txt");
+    Open(InputFile, In_File, GetSourceFile(TypeSource));
     NumberOfRainyDays := GetValueFromRowAndCol(InputFile,Count(MonthNumber),14);
     -- Put_Line(NumberOfRainyDays'Img&"Rainy");
     Close(InputFile);
@@ -233,7 +326,7 @@ task body SumMonthProduction is
     SumInMonth := SumInMonth + OneDayEnergy;
   end loop;
   SumRealYearProduction:= SumRealYearProduction+ Integer(SumInMonth);
-  Put_Line(Positive(SumInMonth)'Img & "  " & SumRealYearProduction'Img);
+  Put_Line("Produkcja w "& MonthNumber'Img&" "&Positive(SumInMonth)'Img & "  Łącznie:" & SumRealYearProduction'Img);
 end SumMonthProduction;
 
 
