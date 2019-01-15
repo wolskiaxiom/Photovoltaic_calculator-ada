@@ -9,6 +9,8 @@ procedure Main is
 
 
 begin
+  Create(OutputFile, Out_File, "stats.txt");
+  Close(OutputFile);
   NumberOfUsers := Float(Float'value(Argument(1)));
   Directory_Ratio := Float(Float'value(Argument(2)));
   PanelEfficiency := Float(Float'value(Argument(3)));
