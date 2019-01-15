@@ -26,7 +26,10 @@ package how_many_modules is
 
   task type SumMonthProduction(MonthNumber: Positive;Directory_Ratio: Positive; NumberOfPanels: Positive; PowerOfModule: Positive; PanelEfficiency:Positive; TypeSource: Positive);
   type PointerSumMonthProduction is access SumMonthProduction;
+  -- task type Print
+
   SemaphoreForReading: Semaphore;
+  SemaphoreForWritting: Semaphore;
 
   function GetSourceFile(TypeSource: Positive) return String;
   function GetFullRow(InputFile: in FILE_TYPE; LineNumber: in Integer) return String;
@@ -82,8 +85,8 @@ package how_many_modules is
   WasteInWinter: Float;
   -- WasteInSummer: Float;
 
-  InputFile : FILE_TYPE;
-  OutputTmpFIle: FILE_TYPE;
+  -- InputFile : FILE_TYPE;
+  OutputFile: FILE_TYPE;
 
   WZS : PointerSumMonthProduction;
   -- SemaphoreForReading: Semafor_Bin(False);

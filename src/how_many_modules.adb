@@ -281,6 +281,7 @@ task body SumMonthProduction is
   PossibilityOfRainyWeather: Float;
 
   InputFile: FILE_TYPE;
+  -- InputFile, OutputFile: FILE_TYPE;
 
   G: Generator;
   RandomNumber: Float;
@@ -327,6 +328,15 @@ task body SumMonthProduction is
   end loop;
   SumRealYearProduction:= SumRealYearProduction+ Integer(SumInMonth);
   Put_Line("Produkcja w "& MonthNumber'Img&" "&Positive(SumInMonth)'Img & "  Łącznie:" & SumRealYearProduction'Img);
+  SemaphoreForWritting.Wait;
+  Open(OutputFile, Append_File, "stats.txt");
+  Put_Line(OutputFile, MonthNumber'Img & ";" & Positive(SumInMonth)'Img & ";" & SumRealYearProduction'Img);
+  Close(OutputFile);
+  SemaphoreForWritting.Signal;
+  exception
+  when others =>
+    Put_Line("Nie można otworzyć pliku");
+
 end SumMonthProduction;
 
 
