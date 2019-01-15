@@ -2,3 +2,5 @@
 *.ali
 *.o
 src/kopia.adb
+__pycache__
+main
