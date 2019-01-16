@@ -121,31 +121,49 @@ begin
       IrNumberOfDays := NumberOfDays(I);
     end if;
   end loop;
+  exception
+    when others =>
+    Put_Line("Warning");
 end GetMinIrradiance;
 
 procedure CalculateRequest(ConstUsage: In Float; NumberOfUsers: In Float; UsagePerson: In Float; Request: Out Float) is
 begin
   Request := Float(ConstUsage) + Float(NumberOfUsers * UsagePerson);
+  exception
+    when others =>
+    Put_Line("Warning");
 end CalculateRequest;
 
 procedure CalculateExpectedPowerOfModules(Request: In Float; NumberOfDays:In Float; Specific_Irradiance: In Float; Directory_Ratio: In Float; PanelEfficiency: In Float; PowerOfModules: Out Float) is
 begin
   PowerOfModules := Request * NumberOfDays/ (Specific_Irradiance/1000.0 * Directory_Ratio * PanelEfficiency);
+  exception
+    when others =>
+    Put_Line("Warning");
 end CalculateExpectedPowerOfModules;
 
 procedure CalculateNumberOfPanelsInWinter(ExpectedPowerOfModules: In Float; PowerOfModule: In Float; NumberOfModules: Out Float) is
 begin
   NumberOfModules := Float'Rounding(ExpectedPowerOfModules/PowerOfModule);
+  exception
+    when others =>
+    Put_Line("Warning");
 end CalculateNumberOfPanelsInWinter;
 
 procedure CalculateAreaOfPanels(NumberOfPanels: In Float; Area: Out Float) is
 begin
   Area := NumberOfPanels*1.1;
+  exception
+    when others =>
+    Put_Line("Warning");
 end CalculateAreaOfPanels;
 
 procedure CalculateYearUsage(Request: In Float; YearUsage: Out Float) is
 begin
   YearUsage := Request * 365.0;
+  exception
+    when others =>
+    Put_Line("Warning");
 end CalculateYearUsage;
 
 procedure SumYearIrradiance(IrTab: In Irradiance; IrSum: Out Float) is
@@ -154,16 +172,25 @@ begin
   for V of IrTab loop
     IrSum := IrSum + V;
   end loop;
+  exception
+    when others =>
+    Put_Line("Warning");
 end SumYearIrradiance;
 
 procedure SumYearProduction(IrSum: In Float; Directory_Ratio: In Float; NumberOfPanels: In Float; PowerOfModule: In Float; PanelEfficiency: In Float; SumEnergy: Out Float) is
 begin
   SumEnergy := IrSum * Directory_Ratio * NumberOfPanels * PowerOfModule * PanelEfficiency/1000.0;
+  exception
+    when others =>
+    Put_Line("Warning");
 end SumYearProduction;
 
 procedure DifferenceBetweenProductionAndRequest(Production: In Float; Request: In Float; Difference: Out Float) is
 begin
   Difference := abs (Production - Request);
+  exception
+    when others =>
+    Put_Line("Warning");
 end DifferenceBetweenProductionAndRequest;
 
 procedure CalculateWaste(DayUsage: In Float; ConstantDayUsage: In Float; PowerOfAllModules: In Float; TotalWaste: Out Float) is
