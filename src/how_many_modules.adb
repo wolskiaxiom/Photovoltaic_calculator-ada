@@ -69,6 +69,11 @@ begin
       WZS := new SumMonthProduction(I,Positive(Directory_Ratio*100.0),Positive(NumberOfPanelsInCaseOfWinter),Positive(PowerOfModule*100.0),Positive(PanelEfficiency*100.0),2);
     end loop;
   end if;
+exception
+  when Data_Error =>
+  Put_Line("Nie udało się odnaleźć pliku");
+  when others =>
+  Put_Line("Nie udało się uruchomić zadania");
 end CalculateRealYearProduction;
 
 function GetFullRow(InputFile: in FILE_TYPE; LineNumber: in Integer) return String is
@@ -83,6 +88,10 @@ begin
       end;
   end loop;
   return "There is no line";
+  exception
+    when others =>
+    Put_Line("Coś poszło nie tak");
+    return "";
 end GetFullRow;
 
 function GetValueFromRowAndCol(InputFile: in FILE_TYPE; Row: in Count; Col: in Count) return Float is
@@ -92,6 +101,11 @@ Set_Line(InputFile, Row);
 Set_Col(InputFile, Col);
 Get(InputFile, Value);
 return Value;
+exception
+  when others =>
+  Put_Line("Nie udało się odczytać danych z pliku");
+  Put_Line("Przyjęto wartości 7.5");
+  return 7.5;
 end GetValueFromRowAndCol;
 
 

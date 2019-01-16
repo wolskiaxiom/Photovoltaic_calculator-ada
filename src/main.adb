@@ -5,6 +5,14 @@ use Ada.Text_IO, how_many_modules,Ada.Command_Line;
 
 procedure Main is
 
+-- task WaitForSignalToExit;
+-- task body WaitForSignalToExit is
+-- begin
+--   loop
+--     Get_Immediate(Zn);
+--     exit when Zn in 'q'|'Q';
+--   end loop;
+-- end WaitForSignalToExit;
 
 
 
@@ -18,15 +26,8 @@ begin
   CheckInputValues(NumberOfUsers, Directory_Ratio,PanelEfficiency,PowerOfModule);
   MakeCalculations(NumberOfUsers, Directory_Ratio,PanelEfficiency,PowerOfModule);
 
-  -- Open(OutputFile, Out_File, "stats.txt");
-  -- Put_Line(OutputFile, "asd");
-  -- Put_Line(OutputFile, "asd");
-  -- Close(OutputFile);
-  -- WZS := new SumMonthProduction(1,Positive(Directory_Ratio*100.0),Positive(NumberOfPanelsInCaseOfWinter),Positive(PowerOfModule*100.0),Positive(PanelEfficiency*100.0));
-  -- WZS := new SumMonthProduction(1,Integer(NumberOfUsers*100.0),1,1,1);
-  -- how_many_modules.ReadingFile.ReadValue(MonthNumber, 1,NumberOfSunnyDays: Float);
   exception
-    when others => Put_Line("Zły format wprowadzonych danych");
+    when Constraint_Error => Put_Line("Zły format wprowadzonych danych");
       Put_Line("Ustawiono domyślne parametry: ");
       Put_Line("2 użytkowników");
       Put_Line("Współczynnik nachylenia: 1.13 (Maksymalny)");
@@ -37,10 +38,7 @@ begin
       PanelEfficiency := 0.80;
       PowerOfModule := 0.28;
 
-      -- Open(OutputFile, Out_File, "stats.txt");
       MakeCalculations(NumberOfUsers, Directory_Ratio,PanelEfficiency,PowerOfModule);
-      -- Put_Line(OutputFile, "asd");
-      -- Put_Line(OutputFile, "asd");
-      -- Close(OutputFile);
-
+    when others =>
+    Put_Line("Coś poszło nie tak");
   end Main;

@@ -22,6 +22,8 @@ package how_many_modules is
   -- Request: Float;
   -- MocMods: Float;
 
+  Zn : Character;
+
 
 
   task type SumMonthProduction(MonthNumber: Positive;Directory_Ratio: Positive; NumberOfPanels: Positive; PowerOfModule: Positive; PanelEfficiency:Positive; TypeSource: Positive);
