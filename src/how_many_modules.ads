@@ -4,31 +4,18 @@ package how_many_modules is
   type Irradiance is array (1..12) of Float;
   type NumberOfDaysInMonth is array(1..12) of Float;
   type DurationOfDayInMonth is array(1..12) of Float;
-  -- type PanelEfficiencyType is digits range 0.0 .. 1.
-  -- task type SumProduction;
-  -- type Wsk_SumProduction is access SumProduction;
-  -- type Degrees is (0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90);
   type WspKor is array (1..19, 1..19) of Float;
   NumberOfDays: NumberOfDaysInMonth := (31.0, 28.0, 31.0, 30.0, 31.0, 30.0, 31.0, 31.0, 30.0, 31.0, 30.0, 31.0);
   DurationOfDay: DurationOfDayInMonth := (8.35, 9.97, 11.92, 13.97, 15.75, 16.68, 16.18, 14.58, 12.62, 10.60, 8.77, 7.7);
   I_Specific: Irradiance := (27217.0, 37262.0, 66879.0, 107159.0, 160845.0, 162168.0, 155488.0, 130632.0, 87335.0, 54470.0, 30835.0, 25242.0);
-  -- Directory_Ratio: Float;
-  -- NumberOfUsers : Float;
-  type General_Float_Pointer is access all Float;
   ConstantUsage : constant Float := 7.2;
   UsagePerPerson: constant Float := 1.25;
   PriceRatio: constant Float := 1.25;
   SumRealYearProduction : Integer := 0 with Atomic;
-  -- Request: Float;
-  -- MocMods: Float;
-
-  Zn : Character;
-
 
 
   task type SumMonthProduction(MonthNumber: Positive;Directory_Ratio: Positive; NumberOfPanels: Positive; PowerOfModule: Positive; PanelEfficiency:Positive; TypeSource: Positive);
   type PointerSumMonthProduction is access SumMonthProduction;
-  -- task type Print
 
   SemaphoreForReading: Semaphore;
   SemaphoreForWritting: Semaphore;
@@ -73,26 +60,18 @@ package how_many_modules is
   ExpectedPowerOfModules:Float;
 
   NumberOfPanelsInCaseOfWinter: Float;
-  -- NumberOfPanelsInCaseOfSummer: Float;
 
   PanelsAreaInCaseOfWinter: Float;
-  -- PanelsAreaInCaseOfSummer: Float;
-
 
   SumOfYearIrradiance: Float;
   SumOfYearProductionInCaseOfWinter: Float;
-  -- SumOfYearProductionInCaseOfSummer: Float;
 
   ExcessInCaseOfWinter: Float;
-  -- DeficiencyInCaseOfSummer: Float;
 
   WasteInWinter: Float;
-  -- WasteInSummer: Float;
 
-  -- InputFile : FILE_TYPE;
   OutputFile: FILE_TYPE;
   OutputFileForOneDay: FILE_TYPE;
 
   WZS : PointerSumMonthProduction;
-  -- SemaphoreForReading: Semafor_Bin(False);
 end how_many_modules;

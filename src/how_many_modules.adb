@@ -229,24 +229,36 @@ end CalculateWaste;
 function GetPossibilityOfSunnyWeather(NumberOfSunnyDays: in Float; NumberOfDays: in Float) return Float is
 begin
   return NumberOfSunnyDays/NumberOfDays;
+  exception
+  when Constraint_Error =>
+  return 0.0;
 end GetPossibilityOfSunnyWeather;
 
 
 function GetPossibilityOfCloudyWeather(NumberOfCloudyDays: in Float; NumberOfDays: in Float) return Float is
 begin
   return NumberOfCloudyDays/NumberOfDays;
+  exception
+  when Constraint_Error =>
+  return 0.0;
 end GetPossibilityOfCloudyWeather;
 
 
 function GetPossibilityOfFoggyWeather(NumberOfFoggyDays: in Float; NumberOfDays: in Float) return Float is
 begin
   return NumberOfFoggyDays/NumberOfDays;
+  exception
+  when Constraint_Error =>
+  return 0.0;
 end GetPossibilityOfFoggyWeather;
 
 
 function GetPossibilityOfRainyWeather(NumberOfRainyDays: in Float; NumberOfDays: in Float) return Float is
 begin
   return NumberOfRainyDays/NumberOfDays;
+  exception
+  when Constraint_Error =>
+  return 0.0;
 end GetPossibilityOfRainyWeather;
 
 function WheatherInRandomDay(PossibilityOfSunnyWeather: in Float;PossibilityOfCloudyWeather: in Float;PossibilityOfFoggyWeather: in Float;PossibilityOfRainyWeather: in Float; RandomNumber: in Float) return Float is
@@ -370,10 +382,10 @@ task body SumMonthProduction is
     Close(InputFile);
     SemaphoreForReading.Signal;
 
-    PossibilityOfSunnyWeather := GetPossibilityOfSunnyWeather(NumberOfSunnyDays,NumberOfDaysValue);
-    PossibilityOfCloudyWeather := GetPossibilityOfCloudyWeather(NumberOfCloudyDays,NumberOfDaysValue);
-    PossibilityOfFoggyWeather := GetPossibilityOfFoggyWeather(NumberOfFoggyDays,NumberOfDaysValue);
-    PossibilityOfRainyWeather := GetPossibilityOfRainyWeather(NumberOfRainyDays,NumberOfDaysValue);
+    PossibilityOfSunnyWeather := GetPossibilityOfSunnyWeather(NumberOfSunnyDays,NumberOfSunnyDays+NumberOfCloudyDays+NumberOfFoggyDays+NumberOfRainyDays);
+    PossibilityOfCloudyWeather := GetPossibilityOfCloudyWeather(NumberOfCloudyDays,NumberOfSunnyDays+NumberOfCloudyDays+NumberOfFoggyDays+NumberOfRainyDays);
+    PossibilityOfFoggyWeather := GetPossibilityOfFoggyWeather(NumberOfFoggyDays,NumberOfSunnyDays+NumberOfCloudyDays+NumberOfFoggyDays+NumberOfRainyDays);
+    PossibilityOfRainyWeather := GetPossibilityOfRainyWeather(NumberOfRainyDays,NumberOfSunnyDays+NumberOfCloudyDays+NumberOfFoggyDays+NumberOfRainyDays);
 
   for DayInMonth in 1..Integer(NumberOfDaysValue) loop
     DayInYear:=CalculateDayInYear(MonthNumber,DayInMonth);
@@ -385,7 +397,6 @@ task body SumMonthProduction is
 
     SemaphoreForWrittingOneDay.Wait;
     Open(OutputFileForOneDay, Append_File, "statsForOneDay.txt");
-    -- Put_Line(DayInYear'Img & ";" & Positive(OneDayEnergy)'Img);
     Put_Line(OutputFileForOneDay, DayInYear'Img & ";" & Positive(OneDayEnergy)'Img);
     Close(OutputFileForOneDay);
     SemaphoreForWrittingOneDay.Signal;
@@ -398,12 +409,9 @@ task body SumMonthProduction is
   Put_Line(OutputFile, MonthNumber'Img & ";" & Positive(SumInMonth)'Img & ";" & SumRealYearProduction'Img);
   Close(OutputFile);
   SemaphoreForWritting.Signal;
-  -- exception
-  -- when others =>
-  --   Put_Line("Nie można otworzyć pliku");
+  exception
+  when others =>
+    Put_Line("Nie można otworzyć pliku");
 
 end SumMonthProduction;
-
-
-
 end how_many_modules;

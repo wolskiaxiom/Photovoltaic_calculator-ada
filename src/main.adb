@@ -5,17 +5,6 @@ use Ada.Text_IO, how_many_modules, Ada.Command_Line;
 
 procedure Main is
 
--- task WaitForSignalToExit;
--- task body WaitForSignalToExit is
--- begin
---   loop
---     Get_Immediate(Zn);
---     exit when Zn in 'q'|'Q';
---   end loop;
--- end WaitForSignalToExit;
-
-
-
 begin
   Create(OutputFile, Out_File, "stats.txt");
   Close(OutputFile);
