@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QLineEdit, QPushButton, QPlainTextEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QLineEdit, QPushButton, QPlainTextEdit, QMessageBox
+from PyQt5.QtCore import QProcess
 import subprocess
 import os
 
@@ -14,7 +15,7 @@ class GUI(QWidget):
         
 
     def interface(self):
-        self.resize(500, 500)
+        self.resize(800, 750)
         self.setWindowTitle("PV Calculator")
         text1 = QLabel("Liczba użytkowników", self)
         text2 = QLabel("Współczynnik nachylenia", self)
@@ -39,6 +40,9 @@ class GUI(QWidget):
             )
         )
 
+        chart = QPushButton("Stworz wykres")
+        chart.clicked.connect(self.makeChart)
+
         grid = QGridLayout()
         grid.addWidget(text1, 0, 0)
         grid.addWidget(text2, 1, 0)
@@ -51,11 +55,19 @@ class GUI(QWidget):
         grid.addWidget(tbox4, 3, 1)
 
         grid.addWidget(calculate, 4, 1)
-        grid.addWidget(outputbox, 5, 0, 2, 0)
+        grid.addWidget(chart, 5, 1)
+        grid.addWidget(outputbox, 6, 0, 2, 0)
 
         self.setLayout(grid)
 
         self.show()
+
+    def makeChart(self):
+        command = "python"
+        args =  ["chary.py"]
+        process = QProcess(self)
+        process.startDetached(command, args)
+
 
 if __name__ == "__main__":
     import sys

@@ -4,3 +4,7 @@
 src/kopia.adb
 __pycache__
 main
+plot.png
+plotperday.png
+stats.txt
+statsForOneDay.txt
