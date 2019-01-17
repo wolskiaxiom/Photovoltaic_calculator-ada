@@ -20,6 +20,7 @@ package how_many_modules is
   SemaphoreForReading: Semaphore;
   SemaphoreForWritting: Semaphore;
   SemaphoreForWrittingOneDay:Semaphore;
+  SemaphoreForAtomic: Semaphore;
 
   function GetSourceFile(TypeSource: Positive) return String;
   function GetFullRow(InputFile: in FILE_TYPE; LineNumber: in Integer) return String;

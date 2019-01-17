@@ -346,6 +346,7 @@ task body SumMonthProduction is
   PossibilityOfFoggyWeather: Float;
   PossibilityOfRainyWeather: Float;
 
+  TMP: Integer;
   InputFile: FILE_TYPE;
   -- InputFile, OutputFile: FILE_TYPE;
 
@@ -401,7 +402,10 @@ task body SumMonthProduction is
     SemaphoreForWrittingOneDay.Signal;
 
   end loop;
-  SumRealYearProduction:= SumRealYearProduction+ Integer(SumInMonth);
+  SemaphoreForAtomic.Wait;
+  TMP:=SumRealYearProduction;
+  SumRealYearProduction:= TMP+ Integer(SumInMonth);
+  SemaphoreForAtomic.Signal;
   Put_Line("Produkcja w "& MonthNumber'Img&" "&Positive(SumInMonth)'Img & "  Łącznie:" & SumRealYearProduction'Img);
   SemaphoreForWritting.Wait;
   Open(OutputFile, Append_File, "stats.txt");
