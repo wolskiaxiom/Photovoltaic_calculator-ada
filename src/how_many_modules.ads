@@ -32,10 +32,12 @@ package how_many_modules is
 
   SemaphoreForReading: Semaphore;
   SemaphoreForWritting: Semaphore;
+  SemaphoreForWrittingOneDay:Semaphore;
 
   function GetSourceFile(TypeSource: Positive) return String;
   function GetFullRow(InputFile: in FILE_TYPE; LineNumber: in Integer) return String;
   function GetValueFromRowAndCol(InputFile: in FILE_TYPE; Row: in Count; Col: in Count) return Float;
+  function CalculateDayInYear(MonthNumber: Integer; DayInMonth: Positive) return Positive;
 
   procedure MakeCalculations(NumberOfUsers: in Float; Directory_Ratio: in Float; PanelEfficiency: in Float;PowerOfModule: in Float );
   procedure GetMinIrradiance(IrTab: in Irradiance; IrVal: out Float; IrNumberOfDays: Out Float);
@@ -89,6 +91,7 @@ package how_many_modules is
 
   -- InputFile : FILE_TYPE;
   OutputFile: FILE_TYPE;
+  OutputFileForOneDay: FILE_TYPE;
 
   WZS : PointerSumMonthProduction;
   -- SemaphoreForReading: Semafor_Bin(False);

@@ -108,6 +108,17 @@ exception
   return 7.5;
 end GetValueFromRowAndCol;
 
+function CalculateDayInYear(MonthNumber: Integer; DayInMonth: Positive) return Positive is
+Result: Integer:=0;
+Iterator: Integer:=1;
+begin
+  while Iterator < MonthNumber loop
+    Result := Result + Integer(NumberOfDays(Iterator));
+    Iterator := Iterator+1;
+  end loop;
+  Result :=Result+ DayInMonth;
+return Positive(Result);
+end CalculateDayInYear;
 
 procedure GetMinIrradiance(IrTab: In Irradiance; IrVal: Out Float; IrNumberOfDays: Out Float) is
 begin
@@ -304,6 +315,8 @@ begin
 end GetSourceFile;
 
 
+
+
 task body SumMonthProduction is
   SumInMonth: Float := 0.0;
   WheatherInRandomDayValue:Float:=1.0;
@@ -326,6 +339,8 @@ task body SumMonthProduction is
 
   G: Generator;
   RandomNumber: Float;
+  DayInYear: Positive;
+
   begin
     SemaphoreForReading.Wait;
     Open(InputFile, In_File, GetSourceFile(TypeSource));
@@ -361,11 +376,20 @@ task body SumMonthProduction is
     PossibilityOfRainyWeather := GetPossibilityOfRainyWeather(NumberOfRainyDays,NumberOfDaysValue);
 
   for DayInMonth in 1..Integer(NumberOfDaysValue) loop
+    DayInYear:=CalculateDayInYear(MonthNumber,DayInMonth);
     Reset(G);
     RandomNumber := Random(G);
     WheatherInRandomDayValue := WheatherInRandomDay(PossibilityOfSunnyWeather,PossibilityOfCloudyWeather,PossibilityOfFoggyWeather,PossibilityOfRainyWeather, RandomNumber);
     OneDayEnergy := OneDayIrradiance * Float(Directory_Ratio) * Float(NumberOfPanels) * Float(PowerOfModule) * Float(PanelEfficiency) * WheatherInRandomDayValue/1000000000.0;
     SumInMonth := SumInMonth + OneDayEnergy;
+
+    SemaphoreForWrittingOneDay.Wait;
+    Open(OutputFileForOneDay, Append_File, "statsForOneDay.txt");
+    Put_Line(DayInYear'Img & ";" & Positive(OneDayEnergy)'Img);
+    Put_Line(OutputFileForOneDay, DayInYear'Img & ";" & Positive(OneDayEnergy)'Img);
+    Close(OutputFileForOneDay);
+    SemaphoreForWrittingOneDay.Signal;
+
   end loop;
   SumRealYearProduction:= SumRealYearProduction+ Integer(SumInMonth);
   Put_Line("Produkcja w "& MonthNumber'Img&" "&Positive(SumInMonth)'Img & "  Łącznie:" & SumRealYearProduction'Img);
@@ -374,9 +398,9 @@ task body SumMonthProduction is
   Put_Line(OutputFile, MonthNumber'Img & ";" & Positive(SumInMonth)'Img & ";" & SumRealYearProduction'Img);
   Close(OutputFile);
   SemaphoreForWritting.Signal;
-  exception
-  when others =>
-    Put_Line("Nie można otworzyć pliku");
+  -- exception
+  -- when others =>
+  --   Put_Line("Nie można otworzyć pliku");
 
 end SumMonthProduction;
 
