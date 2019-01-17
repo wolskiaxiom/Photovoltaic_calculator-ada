@@ -16,17 +16,17 @@ class GUI(QWidget):
     def interface(self):
         self.resize(500, 500)
         self.setWindowTitle("PV Calculator")
-        text1 = QLabel("Number of users", self)
-        text2 = QLabel("Directory ratio", self)
-        text3 = QLabel("Panel effiency", self)
-        text4 = QLabel("Power of module", self)
+        text1 = QLabel("Liczba użytkowników", self)
+        text2 = QLabel("Współczynnik nachylenia", self)
+        text3 = QLabel("Sprawność modułu", self)
+        text4 = QLabel("Moc jednego modułu", self)
 
         tbox1 = QLineEdit()
-        tbox1.setText("4.0")
+        tbox1.setText("2.0")
         tbox2 = QLineEdit()
         tbox2.setText("1.13")
         tbox3 = QLineEdit()
-        tbox3.setText("0.80")
+        tbox3.setText("0.20")
         tbox4 = QLineEdit()
         tbox4.setText("0.28")
 
@@ -34,7 +34,7 @@ class GUI(QWidget):
 
         calculate = QPushButton("Oblicz")
         calculate.clicked.connect(
-            lambda: outputbox.insertPlainText(
+            lambda: outputbox.setPlainText(
                 subprocess.check_output([os.getcwd() + "/main", str(tbox1.text()), str(tbox2.text()), str(tbox3.text()), str(tbox4.text())]).decode("utf-8")
             )
         )

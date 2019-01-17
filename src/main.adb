@@ -1,5 +1,5 @@
 with Ada.Text_IO, how_many_modules, Ada.Command_Line;
-use Ada.Text_IO, how_many_modules,Ada.Command_Line;
+use Ada.Text_IO, how_many_modules, Ada.Command_Line;
 
 
 
@@ -35,7 +35,7 @@ begin
       Put_Line("Moc jednego modułu: 0.28 kW");
       NumberOfUsers := 2.0;
       Directory_Ratio := 1.13;
-      PanelEfficiency := 0.80;
+      PanelEfficiency := 0.20;
       PowerOfModule := 0.28;
 
       MakeCalculations(NumberOfUsers, Directory_Ratio,PanelEfficiency,PowerOfModule);
