@@ -385,7 +385,7 @@ task body SumMonthProduction is
 
     SemaphoreForWrittingOneDay.Wait;
     Open(OutputFileForOneDay, Append_File, "statsForOneDay.txt");
-    Put_Line(DayInYear'Img & ";" & Positive(OneDayEnergy)'Img);
+    -- Put_Line(DayInYear'Img & ";" & Positive(OneDayEnergy)'Img);
     Put_Line(OutputFileForOneDay, DayInYear'Img & ";" & Positive(OneDayEnergy)'Img);
     Close(OutputFileForOneDay);
     SemaphoreForWrittingOneDay.Signal;
