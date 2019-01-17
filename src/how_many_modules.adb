@@ -386,10 +386,9 @@ task body SumMonthProduction is
     PossibilityOfCloudyWeather := GetPossibilityOfCloudyWeather(NumberOfCloudyDays,NumberOfSunnyDays+NumberOfCloudyDays+NumberOfFoggyDays+NumberOfRainyDays);
     PossibilityOfFoggyWeather := GetPossibilityOfFoggyWeather(NumberOfFoggyDays,NumberOfSunnyDays+NumberOfCloudyDays+NumberOfFoggyDays+NumberOfRainyDays);
     PossibilityOfRainyWeather := GetPossibilityOfRainyWeather(NumberOfRainyDays,NumberOfSunnyDays+NumberOfCloudyDays+NumberOfFoggyDays+NumberOfRainyDays);
-
+    Reset(G);
   for DayInMonth in 1..Integer(NumberOfDaysValue) loop
     DayInYear:=CalculateDayInYear(MonthNumber,DayInMonth);
-    Reset(G);
     RandomNumber := Random(G);
     WheatherInRandomDayValue := WheatherInRandomDay(PossibilityOfSunnyWeather,PossibilityOfCloudyWeather,PossibilityOfFoggyWeather,PossibilityOfRainyWeather, RandomNumber);
     OneDayEnergy := OneDayIrradiance * Float(Directory_Ratio) * Float(NumberOfPanels) * Float(PowerOfModule) * Float(PanelEfficiency) * WheatherInRandomDayValue/1000000000.0;
